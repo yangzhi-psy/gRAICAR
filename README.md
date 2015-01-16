@@ -1,5 +1,4 @@
-# gRAICAR
-###--- an exploratory tool for sub-group discovery in neuroimaging data
+# gRAICAR: an exploratory tool for sub-group discovery in neuroimaging data
 
 Author: Zhi Yang, Ph.D.
 
@@ -21,6 +20,16 @@ Key features:
 ## Documentation
 Please see _this tutorial_ for installing and running gRAICAR.
 
+## Demonstration
+An example dataset with 4 subjects is included in this repository, see the directory '_demo_'. 
+
+This example shows recommended directory structure for gRAICAR analyses.
+
+A configuration file, '_gRAICAR\_settings\_rest\_Jan.02.15-21.mat_', is included in '_demo/0scripts/_', which can be loaded into the GUI for performing the example analysis
+
+Alternatively, one can run the batch file, '_batch_setup_gRAICAR.m_' to perform the example analysis without using GUI.
+
+The output of the demonstration, including a webpage report, is in '_demo/output_'. Start browsing from '_demo/output/rest\_webreport/00index1.html_'.
 
 ## Reference
 Please consider to cite the following publications:
