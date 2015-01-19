@@ -13,11 +13,12 @@ end
 idx_err = find(checkTab==0);
 if ~isempty (idx_err')
     errmsg = sprintf ('The following fields are not configured: ');
-    for i=idx_err
-        errmsg = sprintf ('%s\n%s', errmsg, neededFlds{i});
+    for i=idx_err'
+        errmsg = sprintf ('%s \n %s', errmsg, neededFlds{i});
     end
     pass = 0;
     errordlg (errmsg, 'Insufficient settings', 'modal');
+    error(errmsg);
     return
 end
 

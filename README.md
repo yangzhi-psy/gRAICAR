@@ -18,7 +18,7 @@ Key features:
 - Manage multi-core computation
 
 ## Documentation
-Please see _this tutorial_ for installing and running gRAICAR.
+Please see [_this tutorial_](tutorial/tutorial.md) for installing gRAICAR, running gRAICAR, and interpreting its outputs.
 
 ## Demonstration
 An example dataset with 4 subjects is included in this repository, see the directory '_demo_'. 
