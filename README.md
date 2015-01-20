@@ -23,7 +23,7 @@ Please see [_this tutorial_](tutorial/tutorial.md) for installing gRAICAR, runni
 ## Demonstration
 An example dataset with 4 subjects is included in this repository, see the directory '_demo_'. 
 
-This example shows recommended directory structure for gRAICAR analyses.
+This example shows recommended directory structure for gRAICAR analyses. Please refer to [a full directory tree](demo/directoryTree.txt) of the demonstration data.
 
 A configuration file, '_gRAICAR\_settings\_rest\_Jan.02.15-21.mat_', is included in '_demo/0scripts/_', which can be loaded into the GUI for performing the example analysis
 

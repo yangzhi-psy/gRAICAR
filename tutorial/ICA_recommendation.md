@@ -1,4 +1,5 @@
-# Recommendations for performing ICA and normalizing component maps
+# Recommendations for performing ICA, normalizing component maps, and generating group-level mask
+
 
 ## ICA
 
@@ -37,11 +38,25 @@ The '_${standard\_template}_' is a standard template to register to. A template 
 
 The '_melodic\_IC.nii.gz_' is the output from _MELODIC_
 
-The '_${anat_reg_dir}/highres2standard\_warp.nii.gz' is a warp file containing non-learning transformations from the high-resolution T1 image of the subject to the standard space. This file can be obtained using _FNIRT_ in _FSL_ or other co-registration methods (e.g., ANTS).
+The '_${anat\_reg\_dir}/highres2standard\_warp.nii.gz_' is a warp file containing non-learning transformations from the high-resolution T1 image of the subject to the standard space. This file can be obtained using _FNIRT_ in _FSL_ or other co-registration methods (e.g., ANTS).
 
-The '_${func_reg_dir}/example\_func2highres.mat_' is a tranformation matrix from functional images to the high-resolution T1 image of the subject.
+The '_${func\_reg\_dir}/example\_func2highres.mat_' is a tranformation matrix from functional images to the high-resolution T1 image of the subject.
 
 This command will integrate two transformations and co-register the ICA component maps to the standard template.
 
 Like the _MELODIC_ command, this _applywarp_ command can be looped through all subjects.
+
+## Group-level mask
+
+Brain masks of individual subjects should be spatially normalized before generating group-level mask. Please refer to the _applywarp_ command for normalizing individual masks.
+
+The following command can be used to make group-level mask from normalized individual masks:
+
+```bash
+for subj in `cat subjects.list`
+do
+	fslmaths mask_grp.nii.gz -mul mask_${subj}.nii.gz -bin mask_grp.nii.gz
+done
+```
+
 

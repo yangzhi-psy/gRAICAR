@@ -24,7 +24,38 @@ The current version of gRAICAR assumes:
 
 See [this page] (ICA_recommendation.md) for some recommendations for performing ICA, normalizing the ICA component maps, and generating group-level mask.
 
+Here is a directory tree of the required files (also see the demo):
+
+```bash
+├── 0scripts
+│   └── subjs.list
+├── group
+│   └── mask
+│       └── grpmask.nii.gz
+├── subj1
+│   └── rest
+│       └── ICA
+│           └── melodic_autoDim
+│               └── melodic_IC_mni152_3mm.nii
+├── subj2
+│   └── rest
+│       └── ICA
+│           └── melodic_autoDim
+│               └── melodic_IC_mni152_3mm.nii
+├── subj3
+│   └── rest
+│       └── ICA
+│           └── melodic_autoDim
+│               └── melodic_IC_mni152_3mm.nii
+└── subj4
+    └── rest
+        └── ICA
+            └── melodic_autoDim
+                └── melodic_IC_mni152_3mm.nii
+```
+
 **Note:** Future release of gRAICAR aims to implement a convenient way for running ICA on individual subjects.
+
 
 
 ## Run gRAICAR (with MATLAB installed)
@@ -132,7 +163,20 @@ If you click on the brain map, an unthresholded map will show up like this:
 ![gRAICAR webpage report: unthresholded map](gRAICAR_report_unthr.png)
 
 ### Interpretation of the metrics
-todo
+**Component map**
+
+The component maps shown in the report are thresholded by |Z|>1.5 by default, where the voxel-wise Z score here is the standardized score across the entire brain. Each component map is averaged from the ICA component maps of individual subjects (matched by gRAICAR). The weights in the averaging are different across subjects, which are centrality degree of the subjects.
+
+The unthresholded maps are also included in the webpage reports, and can be viewed by clicking on the thresholded component maps.
+
+**Inter-subject similarity matrixatrix**
+
+**Subject load**
+
+**Confidence of subject load**
+
+
+
 
 ### More details
 The gRAICAR outputs are organized into the following directories/files under the specified output directory (see '_demo/output_'):

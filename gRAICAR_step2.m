@@ -42,7 +42,7 @@ for i = 2:ncores
     cmd = sprintf ('%s/bin/matlab -nodisplay -r "addpath(genpath(''%s''));gRAICAR_distrCompNMI (''%s'',''%s'');exit" &', matlabroot, gRAICAR_pth, inPrefix, cueFile);
     fprintf ('\nStarting computing core %d\n', i);
     system (cmd);
-    pause(0.5);
+    pause(1);
 end
 
 fprintf ('\nStarting computing core %d\n', 1);
