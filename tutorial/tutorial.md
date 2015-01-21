@@ -197,7 +197,7 @@ The confidence of subject load represents the percentile of the subject load amo
 
 
 ### More details
-The gRAICAR outputs are organized into the following directories/files under the specified output directory (see '_demo/output_'):
+The gRAICAR outputs are organized into the following directories/files under the specified output directory (see '_demo/output_' and [full directory tree of the demonstration](../demo/directoryTree.txt):
 
 - _compMaps:_ a directory containing weighted averaged group-level component maps, e.g., _comp001.nii.gz_. If the '_Save Movies of Component Maps_' option is checked, the movies are also included in this directory, e.g., _movie\_comp001.nii.gz_. The movie files are 4-D datasets with the last dimension as subjects.
 - _computeFile:_ a directory saving the partitions of the full similarity matrix between all ICA components from all subjects. These are intermediate results.
@@ -205,6 +205,5 @@ The gRAICAR outputs are organized into the following directories/files under the
 - _taskName\_configFile.mat:_ a MATLAB data file saving the input arguments for gRAICAR.
 - _taskName\_result.mat:_ a MATLAB data file containing all statistics from gRAICAR. The webpage report is generated based on these statistics.
 - _taskName\_webreport:_ a directory containing the automatically generated webpage report. The index page is named as _00index1.html_.
-
 
 
