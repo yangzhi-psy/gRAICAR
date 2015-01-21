@@ -118,7 +118,7 @@ else
         cmd = sprintf ('%s/bin/matlab -nodisplay -r "addpath(genpath(''%s''));generateNullRepro_worker (''%s'', %d, %d);exit" &', matlabroot, gRAICAR_pth, fn_tmp, nIt(i), i);
         fprintf ('\nStarting computing core %d\n', i);
         system (cmd);
-        pause(0.5);
+        pause(1);
     end
     
     fprintf ('\nStarting computing core %d\n', 1);
@@ -130,6 +130,7 @@ else
     while prog < ncores
         fn = [rootDir, outDir, '/distComp.log'];
         prog = load (fn, '-ascii');
+        pause (1);
     end
     fprintf ('\nAll computing cores have finished\n');
     

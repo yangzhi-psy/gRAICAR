@@ -18,7 +18,7 @@ generateIndex (totalComp, indexNm, compPerPage);
 % plot meanNMI rank
 h = figure ('Visible', 'off', 'Position', [0,0,3,3], 'unit', 'inch');
 set (gca, 'Position', [0.2, 0.15, 0.75, 0.75]);
-bar (obj.result.meanRepro)
+bar (obj.result.meanRepro, 'k')
 xlabel ('Subject');
 ylabel ('Mean similarity');
 fn = sprintf ('%s/rank_meanSim.png', dirNm);
@@ -26,7 +26,7 @@ print (h, '-dpng', fn);
 
 % plot ratio of significant subjects
 set (gca, 'Position', [0.2, 0.15, 0.75, 0.75]);
-bar (1-obj.result.beta_rank_subjLoad)
+bar (1-obj.result.beta_rank_subjLoad, 'k')
 xlabel ('Subject');
 ylabel ('Ratio of significant subjects');
 fn = sprintf ('%s/rank_betaRank.png', dirNm);

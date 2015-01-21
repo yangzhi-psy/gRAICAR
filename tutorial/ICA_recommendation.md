@@ -38,7 +38,7 @@ The '_${standard\_template}_' is a standard template to register to. A template 
 
 The '_melodic\_IC.nii.gz_' is the output from _MELODIC_
 
-The '_${anat\_reg\_dir}/highres2standard\_warp.nii.gz_' is a warp file containing non-learning transformations from the high-resolution T1 image of the subject to the standard space. This file can be obtained using _FNIRT_ in _FSL_ or other co-registration methods (e.g., ANTS).
+The '_${anat\_reg\_dir}/highres2standard\_warp.nii.gz_' is a warp file containing non-linear transformations from the high-resolution T1 image of the subject to the standard space. This file can be obtained using _FNIRT_ in _FSL_ or other co-registration methods (e.g., ANTS).
 
 The '_${func\_reg\_dir}/example\_func2highres.mat_' is a tranformation matrix from functional images to the high-resolution T1 image of the subject.
 

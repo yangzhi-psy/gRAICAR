@@ -56,6 +56,7 @@ prog = 0;
 while prog < ncores
     fn = [rootDir, outDir, '/distComp.log'];
     prog = load (fn, '-ascii');
+    pause(1);
 end
 
 fprintf ('\nAll computing cores have finished\n');
