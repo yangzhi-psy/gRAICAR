@@ -347,7 +347,7 @@ function btn_save_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-[pass, settings] = check_settings (handles);
+[pass, settings] = gRAICAR_check_settings (handles);
 if pass == 1
     fn = sprintf ('gRAICAR_settings_%s_%s.mat', handles.taskname, datestr(now, 'mmm-dd.HH-MM'));
     uisave ('settings', fn);
