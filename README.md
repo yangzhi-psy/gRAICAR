@@ -5,7 +5,17 @@ Author: Zhi Yang, Ph.D.
 Institute of Psychology, Chinese Academy of Sciences
 
 -
-**To download this package, simply download the zip file (see the last button on the right sidebar) or clone the repository.**
+**To download this package, simply download the zip file (see the last button on the right sidebar) or clone the repository using "git clone https://github.com/yangzhi-psy/gRAICAR".**
+
+This package is also a component of the Connectome Computing System (CCS, https://github.com/zuoxinian)
+
+- gRAICAR setup GUI
+
+![gRAICAR_GUI_init_1.1](tutorial/gRAICAR_GUI_init_1.1.png)
+
+- Example of output
+![gRAICAR_webreport](tutorial/gRAICAR_report_AC1.png)
+
 
 
 ## Release note
