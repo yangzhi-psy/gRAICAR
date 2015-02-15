@@ -5,11 +5,19 @@ Author: Zhi Yang, Ph.D.
 Institute of Psychology, Chinese Academy of Sciences
 
 -
+**To download this package, simply download the zip file (see the last button on the right sidebar) or clone the repository.**
+
 
 ## Release note
+**Feb 15, 2015: Version 1.1**
+
+- This version provides an option to perform ICA on individual subjects using RAICAR. Users can provide fMRI datasets and a group-level mask (both registered to standard space), and leave the ICA and gRAICAR work to the software.
+- A few bug fixes.
+
+
 **Jan 16, 2015: Version 1.0**
 
-The first release of gRAICAR after a major reorganization. 
+The first release of gRAICAR after a major reconstruction. 
 
 Key features:
 
@@ -25,11 +33,11 @@ An example dataset with 4 subjects is included in this repository, see the direc
 
 This example shows recommended directory structure for gRAICAR analyses. Please refer to [a full directory tree](demo/directoryTree.txt) of the demonstration data.
 
-A configuration file, '_gRAICAR\_settings\_rest\_Jan.02.15-21.mat_', is included in '_demo/0scripts/_', which can be loaded into the GUI for performing the example analysis
+Two configuration files, '_gRAICAR_settings_rest_MELODIC.mat_' and '_gRAICAR_settings_rest_RAICAR.mat_' are included in '_demo/0scripts/_'. These configuration files can be loaded using the GUI to run the example analysis.
 
-Alternatively, one can run the batch file, '_batch_setup_gRAICAR.m_' to perform the example analysis without using GUI.
+Alternatively, the user can run the batch file, '_batch_setup_gRAICAR.m_' to perform the example analysis without using GUI.
 
-The output of the demonstration, including a webpage report, is in '_demo/output_'. Start browsing from '_demo/output/rest\_webreport/00index1.html_'.
+The outputs of the demonstration are in '_demo/output_'. There are two versions of webpage reports, one for RAICAR mode, the other for MELODIC mode. Start browsing from '_demo/output/rest\_webreport_RAICAR/00index1.html_'.
 
 ## Reference
 Please consider to cite the following publications:

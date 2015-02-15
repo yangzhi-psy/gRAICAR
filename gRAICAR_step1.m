@@ -46,8 +46,18 @@ for i=1:len
 end
 fclose(fid);
 
+candidates = []; % candiate components
+% check if use RAICAR
+if settings.useRAICAR == 1
+    candidates = gRAICAR_callRAICAR(settings, sbList);
+    icaPrefix = sprintf ('%s_aveMap.nii.gz', settings.icaPrefix);
+    fn = sprintf ('%s/RAICAR_candiates.mat', settings.outdir);
+    save (fn, 'candidates');
+%     load(fn);
+end
+
 % setup analysis
-obj = gRAICAR_setup_singleMelodic (rootDir, sbList, outDir, taskName, icaDir, icaPrefix, maskPath);
+obj = gRAICAR_setup_singleMelodic (rootDir, sbList, outDir, taskName, icaDir, icaPrefix, maskPath, candidates);
 
 % bin the ICA maps
 fprintf ('\n-------------------------\n');

@@ -44,6 +44,7 @@ catch
     errmsg = 'Failed to load the subject list.';
     pass = 0;
     errordlg (errmsg, 'Failed to load subject list file', 'modal');
+    error(errmsg);
     return
 end
 
@@ -59,12 +60,18 @@ if handles.useRAICAR == 0 % if not using RAICAR
         end   
     end
     idx_match = find(matched == 1);
-    len_icapath = length(icapaths{idx_match(1)});
-    tosplit = handles.icapath(len_icapath:end);
-    splited = strsplit(tosplit, '/');
-    settings.icaPrefix = splited{end};
-    settings.icaDir = strjoin(splited(1:end-1), '/');
-    
+    if ~isempty (idx_match)
+        len_icapath = length(icapaths{idx_match(1)});
+        tosplit = handles.icapath(len_icapath:end);
+        splited = strsplit(tosplit, '/');
+        settings.icaPrefix = splited{end};
+        settings.icaDir = strjoin(splited(1:end-1), '/');
+    else
+        errmsg = sprintf ('the ICA result file path is not found under the working directory');
+        errordlg(errmsg, 'Path error', 'modal');
+        error(errmsg);
+        return;
+    end
     % check whether the ica file exist for each subject
     icaFound = zeros(len,1);
     for i=1:len
@@ -81,11 +88,12 @@ if handles.useRAICAR == 0 % if not using RAICAR
         end
         pass = 0;
         errordlg (errmsg, 'Failed to load ICA file', 'modal');
+        error(errmsg);
         return
     end
     
     handles.fmripath =[];
-else
+else % if use RAICAR to run ICA
     matched = zeros(len, 1);
     fmripaths = cell(len, 1);
     for i = 1:len
@@ -95,16 +103,21 @@ else
         end   
     end
     idx_match = find(matched == 1);
-    len_fmripath = length(fmripaths{idx_match(1)});
-    tosplit = handles.fmripath(len_fmripath:end);
-    splited = strsplit(tosplit, '/');
-    settings.fmriPrefix = splited{end};
-    settings.fmriDir = strjoin(splited(1:end-1), '/');
-    
-    % define icaprefix using the RAICAR default
-    settings.icaPrefix = 'RAICAR_ICA';
-    settings.icaDir = '/rest/ICA/RAICAR';
-    
+    if ~isempty (idx_match)
+        len_fmripath = length(fmripaths{idx_match(1)});
+        tosplit = handles.fmripath(len_fmripath:end);
+        splited = strsplit(tosplit, '/');
+        settings.fmriPrefix = splited{end};
+        settings.fmriDir = strjoin(splited(1:end-1), '/');
+
+        % define icaprefix using the RAICAR default
+        settings.icaPrefix = 'RAICAR_ICA';
+        settings.icaDir = '/rest/ICA/RAICAR';
+    else
+        errmsg = sprintf ('the fMRI file path is not found under the working directory');
+        errordlg(errmsg, 'Path error', 'modal');
+        error(errmsg);
+    end
     
     % check whether the fmri file exist for each subject
     fmriFound = zeros(len,1);
@@ -122,6 +135,7 @@ else
         end
         pass = 0;
         errordlg (errmsg, 'Failed to load fMRI file', 'modal');
+        error(errmsg);
         return
     end
     handles.icapath = [];
@@ -135,14 +149,21 @@ settings.maskPath = handles.maskpath(length(handles.workdir)+1:end);
 
 % copy settings
 try
-    for nm = {'ncores', 'workdir', 'outdir', 'subjlist', 'taskname', 'icapath', 'fmripath', 'maskpath', 'savemovie', 'webreport'}
+    for nm = {'ncores', 'workdir', 'outdir', 'subjlist', 'taskname', 'icapath', 'fmripath', 'maskpath', 'savemovie', 'webreport', 'useRAICAR'}
         fdnm = cell2mat (nm);
         settings.(fdnm) = handles.(fdnm);
     end
     
     % default settings
-    settings.displayThreshold = 1.5;
-    settings.compPerPage = 10;
+    if ~isfield(settings, 'displayThreshold')
+        settings.displayThreshold = 1.5;
+    end
+    if ~isfield(settings, 'compPerPage')
+        settings.compPerPage = 10;
+    end
+    if ~isfield(settings, 'reproThr')
+        settings.reproThr = 0.5; % threshold of mean reproducibility in RAICAR, for selecting reproducibile ICs before gRAICAR.
+    end
 catch
     pass = 0;
     errordlg ('Error in copying settings, please look for invalid paths', 'Error in settings', 'modal');

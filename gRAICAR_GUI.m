@@ -22,7 +22,7 @@ function varargout = gRAICAR_GUI(varargin)
 
 % Edit the above text to modify the response to help gRAICAR_GUI
 
-% Last Modified by GUIDE v2.5 27-Jan-2015 16:51:57
+% Last Modified by GUIDE v2.5 14-Feb-2015 23:16:27
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -371,8 +371,7 @@ function btn_load_Callback(hObject, eventdata, handles)
 [filename, pathname] = uigetfile('*.mat', 'Select a gRAICAR setting file:');
 if filename ~= 0
     load (fullfile(pathname, filename));
-    
-    for nm = {'ncores', 'workdir', 'outdir', 'subjlist', 'taskname', 'icapath', 'fmripath', 'maskpath', 'savemovie', 'webreport'}
+    for nm = fieldnames(settings)'
         fdnm = cell2mat (nm);
         handles.(fdnm) = settings.(fdnm);
     end
@@ -384,8 +383,12 @@ if filename ~= 0
     set(handles.edit_subjList,  'string', handles.subjlist, 'ForegroundColor', [0 0 0], 'ButtonDownFcn', [], 'Enable', 'on');
     set(handles.edit_taskName,  'string', handles.taskname, 'ForegroundColor', [0 0 0], 'ButtonDownFcn', [], 'Enable', 'on');
     if handles.useRAICAR == 0
+        set(handles.checkbox_RAICAR, 'value', 0);
+        set(handles.text5, 'string', 'First ICA File');
         set(handles.edit_ICAdir, 'string', handles.icapath, 'ForegroundColor', [0 0 0], 'ButtonDownFcn', [], 'Enable', 'on');
     else
+        set(handles.checkbox_RAICAR, 'value', 1);
+        set(handles.text5, 'string', 'First fMRI file')
         set(handles.edit_ICAdir, 'string', handles.fmripath, 'ForegroundColor', [0 0 0], 'ButtonDownFcn', [], 'Enable', 'on');
     end
     set(handles.edit_maskPath,  'string', handles.maskpath, 'ForegroundColor', [0 0 0], 'ButtonDownFcn', [], 'Enable', 'on');

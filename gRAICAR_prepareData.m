@@ -72,7 +72,7 @@ for sb = sub
    
 			%%%%%%%%% filter data %%%%%%%
             if ~isempty (obj.setup.candidates)
-                select = cell2mat (obj.setup.candidates{tr, sb});
+                select = obj.setup.candidates{tr, sb};
                 comp = icasig(select, :);
 			else
 				comp = icasig;
