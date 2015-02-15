@@ -22,7 +22,7 @@ function varargout = gRAICAR_GUI(varargin)
 
 % Edit the above text to modify the response to help gRAICAR_GUI
 
-% Last Modified by GUIDE v2.5 02-Jan-2015 19:27:26
+% Last Modified by GUIDE v2.5 14-Feb-2015 23:16:27
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -56,12 +56,13 @@ function gRAICAR_GUI_OpeningFcn(hObject, eventdata, handles, varargin)
 handles.output = hObject;
 
 % set up default values
-handles.workdir = [];
+handles.workdir  = [];
 handles.outdir   = [];
-handles.subjlist  = [];
+handles.subjlist = [];
 handles.taskname = 'analysis1';
-handles.icapath = [];
+handles.icapath  = [];
 handles.maskpath = [];
+handles.fmripath = [];
 if ispc
     handles.ncores  = str2double(getenv('NUMBER_OF_PROCESSORS'));
     handles.maxcores = str2double(getenv('NUMBER_OF_PROCESSORS'));
@@ -69,8 +70,9 @@ else
     handles.ncores  = feature('numcores');
     handles.maxcores = feature('numcores');
 end
-handles.savemovie= 1;
-handles.webreport= 1;
+handles.savemovie = 1;
+handles.webreport = 1;
+handles.useRAICAR = 0;
 
 % Update handles structure
 guidata(hObject, handles);
@@ -285,7 +287,12 @@ function edit_ICAdir_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of edit_ICAdir as text
 %        str2double(get(hObject,'String')) returns contents of edit_ICAdir as a double
-handles.icapath = get(hObject, 'String');
+if handles.useRAICAR == 0
+    handles.icapath = get(hObject, 'String');
+else
+    handles.fmripath = get(hObject, 'String');
+end
+
 guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
@@ -364,8 +371,7 @@ function btn_load_Callback(hObject, eventdata, handles)
 [filename, pathname] = uigetfile('*.mat', 'Select a gRAICAR setting file:');
 if filename ~= 0
     load (fullfile(pathname, filename));
-    
-    for nm = {'ncores', 'workdir', 'outdir', 'subjlist', 'taskname', 'icapath', 'maskpath', 'savemovie', 'webreport'}
+    for nm = fieldnames(settings)'
         fdnm = cell2mat (nm);
         handles.(fdnm) = settings.(fdnm);
     end
@@ -376,7 +382,15 @@ if filename ~= 0
     set(handles.edit_outputDir, 'string', handles.outdir, 'ForegroundColor', [0 0 0], 'ButtonDownFcn', [], 'Enable', 'on');
     set(handles.edit_subjList,  'string', handles.subjlist, 'ForegroundColor', [0 0 0], 'ButtonDownFcn', [], 'Enable', 'on');
     set(handles.edit_taskName,  'string', handles.taskname, 'ForegroundColor', [0 0 0], 'ButtonDownFcn', [], 'Enable', 'on');
-    set(handles.edit_ICAdir,    'string', handles.icapath, 'ForegroundColor', [0 0 0], 'ButtonDownFcn', [], 'Enable', 'on');
+    if handles.useRAICAR == 0
+        set(handles.checkbox_RAICAR, 'value', 0);
+        set(handles.text5, 'string', 'First ICA File');
+        set(handles.edit_ICAdir, 'string', handles.icapath, 'ForegroundColor', [0 0 0], 'ButtonDownFcn', [], 'Enable', 'on');
+    else
+        set(handles.checkbox_RAICAR, 'value', 1);
+        set(handles.text5, 'string', 'First fMRI file')
+        set(handles.edit_ICAdir, 'string', handles.fmripath, 'ForegroundColor', [0 0 0], 'ButtonDownFcn', [], 'Enable', 'on');
+    end
     set(handles.edit_maskPath,  'string', handles.maskpath, 'ForegroundColor', [0 0 0], 'ButtonDownFcn', [], 'Enable', 'on');
     set(handles.edit_numCores,  'string', handles.ncores, 'ForegroundColor', [0 0 0], 'ButtonDownFcn', [], 'Enable', 'on');
     set(handles.checkbox_saveMovie, 'value', handles.savemovie, 'ForegroundColor', [0 0 0], 'ButtonDownFcn', [], 'Enable', 'on');
@@ -521,16 +535,28 @@ function btn_ICAfile_Callback(hObject, eventdata, handles)
 % hObject    handle to btn_ICAfile (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-[fn, fpth] = uigetfile('*.*', 'Select an ICA result file (.nii or .nii.gz):');
-if fn == 0
-    handles.icapath = '';
+if handles.useRAICAR == 0
+    [fn, fpth] = uigetfile('*.*', 'Select an ICA result file (.nii or .nii.gz):');
+    if fn == 0
+        handles.icapath = '';
+    else
+        handles.icapath = fullfile (fpth, fn);
+    end
+    set(handles.edit_ICAdir, 'String', handles.icapath);
 else
-    handles.icapath = fullfile (fpth, fn);
+    [fn, fpth] = uigetfile('*.*', 'Select an fMRI file (.nii or .nii.gz):');
+    if fn == 0
+        handles.fmripath = '';
+    else
+        handles.fmripath = fullfile (fpth, fn);
+    end
+    set(handles.edit_ICAdir, 'String', handles.fmripath);
 end
+
 set(handles.edit_ICAdir, 'Enable', 'on');
 set(handles.edit_ICAdir, 'ForegroundColor', [0 0 0]);
 set(handles.edit_ICAdir, 'ButtonDownFcn', []); % disable the buttondown event in the corresponding edit box
-set(handles.edit_ICAdir, 'String', handles.icapath);
+
 guidata(hObject, handles);
 
 % --- Executes on button press in checkbox_saveMovie.
@@ -553,3 +579,28 @@ function checkbox_report_Callback(hObject, eventdata, handles)
 handles.webreport = get(hObject, 'Value');
 guidata(hObject, handles);
 
+
+% --- Executes on button press in checkbox_RAICAR.
+function checkbox_RAICAR_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox_RAICAR (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of checkbox_RAICAR
+handles.useRAICAR = get(hObject, 'Value');
+if handles.useRAICAR == 1
+    set (handles.text5, 'string', 'First fMRI file');
+    if isempty (handles.fmripath)
+        set (handles.edit_ICAdir, 'string', 'processed fMRI file for the first subject', 'ForegroundColor', [1 0 0]);
+    else
+        set (handles.edit_ICAdir, 'string', handles.fmripath, 'ForegroundColor', [0 0 0]);
+    end    
+else
+    set (handles.text5, 'string', 'First ICA file');
+    if isempty (handles.icapath)
+        set (handles.edit_ICAdir, 'string', 'ICA result file for the first subject', 'ForegroundColor', [1 0 0]);
+    else
+        set (handles.edit_ICAdir, 'string', handles.icapath, 'ForegroundColor', [0 0 0]);
+    end
+end
+guidata(hObject, handles);

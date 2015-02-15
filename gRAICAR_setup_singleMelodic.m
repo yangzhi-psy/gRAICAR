@@ -1,5 +1,5 @@
 
-function obj = gRAICAR_setup_singleMelodic (rootDir, sbList, outDir, taskName, icaDir, icaPrefix, maskPath)
+function obj = gRAICAR_setup_singleMelodic (rootDir, sbList, outDir, taskName, icaDir, icaPrefix, maskPath, candidates)
 % parse input
 obj.setup.subNum = length (sbList);
 obj.setup.trial  = 1*ones(obj.setup.subNum,1);
@@ -11,15 +11,15 @@ infoFn = []; %'../gRAICAR/mask_coordTable.mat';
 obj.setup.maskNm = [rootDir,maskPath];
 
 %%%%% set up candidate %%%%%
-obj.setup.candidates = [];
+obj.setup.candidates = candidates;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 obj.setup.outDir = [rootDir, outDir];
 obj.setup.outPrefix = [obj.setup.outDir, '/', taskName];
 obj.setup.cmptPrefix = obj.setup.outDir;
 obj.setup.step = 50;
-eval (['!mkdir -p ', obj.setup.outDir]);
-eval (['!mkdir -p ', obj.setup.outDir, '/computeFile']);
+mkdir (obj.setup.outDir);
+mkdir ([obj.setup.outDir, '/computeFile']);
 
 % trialTab: a table storing the mapping between trials and subjects
 obj.result.trialTab = [];

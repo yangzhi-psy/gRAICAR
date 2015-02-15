@@ -4,7 +4,12 @@ function [pass, settings] = gRAICAR_check_settings (handles)
 
 pass = 1;
 % check fields
-neededFlds = {'ncores', 'workdir', 'outdir', 'subjlist', 'taskname', 'icapath', 'maskpath', 'savemovie', 'webreport'};
+if handles.useRAICAR == 0
+    neededFlds = {'ncores', 'workdir', 'outdir', 'subjlist', 'taskname', 'icapath', 'maskpath', 'savemovie', 'webreport'};
+else
+    neededFlds = {'ncores', 'workdir', 'outdir', 'subjlist', 'taskname', 'fmripath', 'maskpath', 'savemovie', 'webreport'};
+end
+
 checkTab = zeros (length(neededFlds),1);
 for i = 1:length(neededFlds)
     fdnm = cell2mat (neededFlds(i));
@@ -39,57 +44,126 @@ catch
     errmsg = 'Failed to load the subject list.';
     pass = 0;
     errordlg (errmsg, 'Failed to load subject list file', 'modal');
+    error(errmsg);
     return
 end
 
 % determine icaPrefix and icaDir
-matched = zeros(len, 1);
-icapaths = cell(len, 1);
-for i = 1:len
-    icapaths{i} = sprintf('%s/%s/',handles.workdir, sbList{i});
-    if strfind(handles.icapath, icapaths{i})==1
-        matched(i) = 1;
-    end   
+
+if handles.useRAICAR == 0 % if not using RAICAR
+    matched = zeros(len, 1);
+    icapaths = cell(len, 1);
+    for i = 1:len
+        icapaths{i} = sprintf('%s/%s/',handles.workdir, sbList{i});
+        if strfind(handles.icapath, icapaths{i})==1
+            matched(i) = 1;
+        end   
+    end
+    idx_match = find(matched == 1);
+    if ~isempty (idx_match)
+        len_icapath = length(icapaths{idx_match(1)});
+        tosplit = handles.icapath(len_icapath:end);
+        splited = strsplit(tosplit, '/');
+        settings.icaPrefix = splited{end};
+        settings.icaDir = strjoin(splited(1:end-1), '/');
+    else
+        errmsg = sprintf ('the ICA result file path is not found under the working directory');
+        errordlg(errmsg, 'Path error', 'modal');
+        error(errmsg);
+        return;
+    end
+    % check whether the ica file exist for each subject
+    icaFound = zeros(len,1);
+    for i=1:len
+        fn = sprintf('%s/%s%s/%s', handles.workdir, sbList{i}, settings.icaDir, settings.icaPrefix);
+        if exist(fn)== 2
+            icaFound(i) = 1;
+        end
+    end
+    idx_err = find(icaFound==0);
+    if ~isempty (idx_err)
+        errmsg = sprintf ('Failed to find the ICA result files for the following subjects: ');
+        for i=[idx_err']
+            errmsg = sprintf ('%s  \n  %s', errmsg, sbList{i});
+        end
+        pass = 0;
+        errordlg (errmsg, 'Failed to load ICA file', 'modal');
+        error(errmsg);
+        return
+    end
+    
+    handles.fmripath =[];
+else % if use RAICAR to run ICA
+    matched = zeros(len, 1);
+    fmripaths = cell(len, 1);
+    for i = 1:len
+        fmripaths{i} = sprintf('%s/%s/',handles.workdir, sbList{i});
+        if strfind(handles.fmripath, fmripaths{i})==1
+            matched(i) = 1;
+        end   
+    end
+    idx_match = find(matched == 1);
+    if ~isempty (idx_match)
+        len_fmripath = length(fmripaths{idx_match(1)});
+        tosplit = handles.fmripath(len_fmripath:end);
+        splited = strsplit(tosplit, '/');
+        settings.fmriPrefix = splited{end};
+        settings.fmriDir = strjoin(splited(1:end-1), '/');
+
+        % define icaprefix using the RAICAR default
+        settings.icaPrefix = 'RAICAR_ICA';
+        settings.icaDir = '/rest/ICA/RAICAR';
+    else
+        errmsg = sprintf ('the fMRI file path is not found under the working directory');
+        errordlg(errmsg, 'Path error', 'modal');
+        error(errmsg);
+    end
+    
+    % check whether the fmri file exist for each subject
+    fmriFound = zeros(len,1);
+    for i=1:len
+        fn = sprintf('%s/%s%s/%s', handles.workdir, sbList{i}, settings.fmriDir, settings.fmriPrefix);
+        if exist(fn)== 2
+            fmriFound(i) = 1;
+        end
+    end
+    idx_err = find(fmriFound==0);
+    if ~isempty (idx_err)
+        errmsg = sprintf ('Failed to find the fMRI files for the following subjects: ');
+        for i=[idx_err']
+            errmsg = sprintf ('%s  \n  %s', errmsg, sbList{i});
+        end
+        pass = 0;
+        errordlg (errmsg, 'Failed to load fMRI file', 'modal');
+        error(errmsg);
+        return
+    end
+    handles.icapath = [];
 end
-idx_match = find(matched == 1);
-len_icapath = length(icapaths{idx_match(1)});
-tosplit = handles.icapath(len_icapath:end);
-splited = strsplit(tosplit, '/');
-settings.icaPrefix = splited{end};
-settings.icaDir = strjoin(splited(1:end-1), '/');
+
 settings.outDir = handles.outdir(length(handles.workdir)+1:end);
 settings.pathSbList = handles.subjlist(length(handles.workdir)+1:end);
 settings.maskPath = handles.maskpath(length(handles.workdir)+1:end);
 
-% check whether the ica file exist for each subject
-icaFound = zeros(len,1);
-for i=1:len
-    fn = sprintf('%s/%s%s/%s', handles.workdir, sbList{i}, settings.icaDir, settings.icaPrefix);
-    if exist(fn)== 2
-        icaFound(i) = 1;
-    end
-end
-idx_err = find(icaFound==0);
-if ~isempty (idx_err)
-    errmsg = sprintf ('Failed to find the ICA result files for the following subjects: ');
-    for i=[idx_err']
-        errmsg = sprintf ('%s  \n  %s', errmsg, sbList{i});
-    end
-    pass = 0;
-    errordlg (errmsg, 'Failed to load ICA file', 'modal');
-    return
-end
+
 
 % copy settings
 try
-    for nm = {'ncores', 'workdir', 'outdir', 'subjlist', 'taskname', 'icapath', 'maskpath', 'savemovie', 'webreport'}
+    for nm = {'ncores', 'workdir', 'outdir', 'subjlist', 'taskname', 'icapath', 'fmripath', 'maskpath', 'savemovie', 'webreport', 'useRAICAR'}
         fdnm = cell2mat (nm);
         settings.(fdnm) = handles.(fdnm);
     end
     
     % default settings
-    settings.displayThreshold = 1.5;
-    settings.compPerPage = 10;
+    if ~isfield(settings, 'displayThreshold')
+        settings.displayThreshold = 1.5;
+    end
+    if ~isfield(settings, 'compPerPage')
+        settings.compPerPage = 10;
+    end
+    if ~isfield(settings, 'reproThr')
+        settings.reproThr = 0.5; % threshold of mean reproducibility in RAICAR, for selecting reproducibile ICs before gRAICAR.
+    end
 catch
     pass = 0;
     errordlg ('Error in copying settings, please look for invalid paths', 'Error in settings', 'modal');

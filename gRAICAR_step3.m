@@ -133,6 +133,7 @@ else
         pause (1);
     end
     fprintf ('\nAll computing cores have finished\n');
+    delete (fn_tmp);
     
     % merge all parts
     for i = 2:ncores
@@ -198,7 +199,7 @@ if settings.savemovie == 1
     allMap = gRAICAR_movie_fast (obj, 1:size (obj.result.foundComp,1));
     sz=size(allMap);
     for i=1:sz(4)
-        hdr.img = squeeze(allMap(:,:,:,i,:));
+        hdr.vol = squeeze(allMap(:,:,:,i,:));
         hdr.dim = [4 sz(1) sz(2) sz(3) sz(5) 1 1 1];
         hdr.glmax = max (squeeze(allMap(:,:,:,i,:)));
         hdr.glmin = min (squeeze(allMap(:,:,:,i,:)));

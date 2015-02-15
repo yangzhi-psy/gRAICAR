@@ -20,8 +20,18 @@ for sb = 1:obj.setup.subNum
 		% to be replaced by more capable loading function
 		fn = sprintf ('%s/%s', cell2mat (obj.setup.subDir(sb)), obj.setup.ICAprefix);
         hdr = load_nifti(fn);
-        nii = hdr.vol;
         dim = hdr.dim([2:5]);
+        
+        % select components
+        if ~isempty (obj.setup.candidates)
+            select = obj.setup.candidates{tr, sb};
+            nii = hdr.vol(:,:,:,select);
+            dim(4) = length(select);
+        else
+            nii = hdr.vol;
+        end
+        %%%
+        
 		icasig = reshape (nii, dim(1)*dim(2)*dim(3), dim(4));
 		icasig (obj.result.mask==0, :) = [];
 		icasig = icasig';
