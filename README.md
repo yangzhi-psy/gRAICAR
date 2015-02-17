@@ -39,7 +39,7 @@ Key features:
 Please see [_this tutorial_](tutorial/tutorial.md) for installing gRAICAR, running gRAICAR, and interpreting its outputs.
 
 ## Demonstration
-An example dataset with 4 subjects is included in this repository, see the directory '_demo_'. 
+An example dataset with 4 subjects can be downloaded [here](http://pan.baidu.com/s/1hqgnQYg). To extract the zip file, type `tar zxvf demo.tgz`.
 
 This example shows recommended directory structure for gRAICAR analyses. Please refer to [a full directory tree](demo/directoryTree.txt) of the demonstration data.
 

@@ -256,7 +256,9 @@ settings.displayThreshold = 1.5000;
 settings.compPerPage= 10;
 
 %%%%%%%%%%% run gRAICAR %%%%%%%%%%%%%%
-gRAICAR_run (settings);```
+gRAICAR_run (settings);
+```
+
 Users can alter the path settings as needed and run this script in MATLAB.
 
 ## gRAICAR outputs
