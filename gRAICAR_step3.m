@@ -166,6 +166,7 @@ fprintf (' weighted averaging ICs \n');
 fprintf ('-------------------------\n');
 tic,
 [map4D, allMap] = gRAICAR_weight_averageMap_fast (obj, 1:size (obj.result.foundComp));
+
 fn = sprintf ('%s_aveMap.mat', obj.setup.outPrefix);
 save (fn, 'map4D');
 
@@ -176,13 +177,13 @@ fprintf ('-------------------------\n');
 
 hdr = obj.setup.niihdr;
 sz = size (map4D);
-cmd = sprintf ('!mkdir -p %s/compMaps/', obj.setup.outDir);
-eval (cmd);
+mkdir(sprintf('%s/compMaps/', obj.setup.outDir));
 for i=1:sz(4)
 	hdr.vol = map4D(:,:,:,i);
 	hdr.dim = [3 sz(1) sz(2) sz(3) 1 1 1 1];
-	hdr.glmax = max (map4D(:,:,:,i));
-	hdr.glmin = max (map4D(:,:,:,i));
+    hdr.pixdim = [-1 3 3 3 0 0 0 0];
+	hdr.glmax = max (hdr.vol(:));
+	hdr.glmin = min (hdr.vol(:));
 	fn = sprintf('%s/compMaps/comp%03d.nii.gz', obj.setup.outDir, i);
 	save_nifti (hdr, fn);
 	fprintf ('compMap%d written out\n', i);

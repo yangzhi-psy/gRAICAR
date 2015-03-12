@@ -38,6 +38,12 @@ cueFile = [rootDir, outDir, '/progress.log'];
 pth = which ('gRAICAR_step2');
 gRAICAR_pth = fileparts(pth);
 
+% initialize distComp log
+fn = [rootDir, outDir, '/distComp.log'];
+prog = 0;
+save (fn, 'prog', '-ascii');
+
+% call distComp
 for i = 2:ncores
     cmd = sprintf ('%s/bin/matlab -nodisplay -r "addpath(genpath(''%s''));gRAICAR_distrCompNMI (''%s'',''%s'');exit" &', matlabroot, gRAICAR_pth, inPrefix, cueFile);
     fprintf ('\nStarting computing core %d\n', i);

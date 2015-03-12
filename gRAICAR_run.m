@@ -1,19 +1,22 @@
-function gRAICAR_run (settings)
+function gRAICAR_run (settings, step)
 
 [pass, settings] = gRAICAR_check_settings (settings);
 
 if pass == 1
     % start step 1
-
-    [status, exeption] = gRAICAR_step1(settings);
-    if status == 0  % check error
-       rethrow (exeption);
+    if step < 2
+        [status, exeption] = gRAICAR_step1(settings);
+        if status == 0  % check error
+           rethrow (exeption);
+        end
     end
 
     % start step 2
-    [status, exeption] = gRAICAR_step2(settings);
-    if status == 0
-        rethrow (exeption);
+    if step < 3
+        [status, exeption] = gRAICAR_step2(settings);
+        if status == 0
+           rethrow (exeption);
+        end
     end
 
     % start step 3

@@ -11,76 +11,22 @@ step = obj.setup.step;
 cont = 1;
 while cont == 1
 go = 0;
-while go == 0
-    try
-		cue = load (cuefile, '-ascii');  % cue is the current ptr
-		ptr = cue;
-		cue = ptr+step;
-		% update progress file
-		save (cuefile, 'cue', '-ascii');
-		go = 1;
-    catch
-		fprintf ('warning: reading progress file failed!\n');
-    end
-end
-    
-% computation
-% determine the length of the loop
-total = size (obj.result.cmptTab, 1);
-if ptr <= total
-	if ptr+step-1 <= total
-		long = step;
-	else 
-		long = total-ptr+1;
-	end
-
-	% main computation loop
-    mi_part = cell (long, 1);
-    for i = 1:long
-		% load trials to be computed
-		tr_ptr = obj.result.cmptTab(ptr+i-1, :);
-		split = [0;0];
-        numVx = 0;
-        lgthPar = 0;
-		for j = 1:2
-			tr = obj.result.trialTab(tr_ptr(j), 1);
-            sb = obj.result.trialTab(tr_ptr(j), 2);
-			fn = sprintf ('%s/bin_%s%d.mat', cell2mat (obj.setup.subDir(sb)), ...
-							obj.setup.ICAprefix, tr);
-			load (fn);
-            split(j) = size (comp, 1);
-            obj.result.trialTab(tr_ptr(j), 3) = split(j);
-            if j == 1
-                comp1 = comp';
-                numVx = size (comp, 2);
-                lgthPar = ceil (numVx^(1/3));
-            else
-                comp2 = comp';
-            end
-			clear comp;
-		end
-	
-		% computation
-		fprintf ('computing block %d of %d\n', ptr+i-1, total); 
-		tic,
-        mi_blk = zeros (split(1), split(2));
-        for c1 = 1:split(1)
-            xx = comp1(:, c1);
-            for c2 = 1:split(2) 
-                yy = comp2(:, c2);
-                mi_blk(c1, c2) = calcNMI (xx, yy, numVx, lgthPar);
-            end
+    while go == 0
+        try
+            cue = load (cuefile, '-ascii');  % cue is the current ptr
+            ptr = cue;
+            cue = ptr+step;
+            % update progress file
+            save (cuefile, 'cue', '-ascii');
+            go = 1;
+        catch
+            fprintf ('warning: reading progress file failed!\n');
         end
-        mi_part(i) = {mi_blk};
-        toc,
     end
-	
-    % save result
-    fn = sprintf ('%s/computeFile/NMI_grp_result_%d', obj.setup.outDir, ptr);
-    save (fn, 'mi_part');
-		
-else
-	cont = 0;
+   
+    % computation
+    % determine the length of the loop
+    cont = coreCompNMI (obj, ptr);
 end
 
 % update computing core log
@@ -89,4 +35,3 @@ fn = fullfile (PATHSTR, 'distComp.log');
 prog = load (fn, '-ascii'); 
 prog = prog+1;
 save (fn, 'prog', '-ascii');
-end

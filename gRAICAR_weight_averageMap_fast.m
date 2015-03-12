@@ -70,7 +70,7 @@ for sb = 1:obj.setup.subNum
 	end % trial
 end % subject
 
-% for id = 1:length (comps)
-%     aveMap(id, :) = (aveMap(id,:) - mean(aveMap(id, :)))/std(aveMap(id, :));
-% end
+for id = 1:length (comps)
+   aveMap(id, :) = (aveMap(id,:) - mean(aveMap(id, :)))/std(aveMap(id, :));
+end
 map4D = raicar_2Dto4D (aveMap, size(obj.result.mask), obj.result.coordTable);
