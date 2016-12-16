@@ -309,7 +309,7 @@ nii = subj.result.info;
 nii.dim(5) = size (subj.result.aveTc, 2);
 nii.vol = subj.result.aveMap;
 
-save_nifti (nii, [subj.setup.outPrefix, '_aveMap', '.nii.gz']);
+save_nifti (nii, [subj.setup.outPrefix, '_aveMap', '.nii']);
 clear nii;
 fprintf ('seccess\n');
 

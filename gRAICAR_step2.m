@@ -32,20 +32,20 @@ ncores = settings.ncores;
 
 %%%%%%%%%% end of user settings %%%%%%%%%%%%%%%%%%%
 
-inPrefix = [rootDir, outDir, '/',taskName];
-cueFile = [rootDir, outDir, '/progress.log'];
+inPrefix = fullfile(rootDir, outDir,taskName);
+cueFile = fullfile(rootDir, outDir, 'progress.log');
 % call distributed computing function
 pth = which ('gRAICAR_step2');
 gRAICAR_pth = fileparts(pth);
 
 % initialize distComp log
-fn = [rootDir, outDir, '/distComp.log'];
+fn = fullfile(rootDir, outDir, 'distComp.log');
 prog = 0;
 save (fn, 'prog', '-ascii');
 
 % call distComp
 for i = 2:ncores
-    cmd = sprintf ('%s/bin/matlab -nodisplay -r "addpath(genpath(''%s''));gRAICAR_distrCompNMI (''%s'',''%s'');exit" &', matlabroot, gRAICAR_pth, inPrefix, cueFile);
+    cmd = sprintf ('"%s" -nodisplay -r "addpath(genpath(''%s''));gRAICAR_distrCompNMI (''%s'',''%s'');exit" &', fullfile(matlabroot, 'bin', 'matlab.exe'), gRAICAR_pth, inPrefix, cueFile);
     fprintf ('\nStarting computing core %d\n', i);
     system (cmd);
     pause(1);

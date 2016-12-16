@@ -5,21 +5,21 @@ obj.setup.subNum = length (sbList);
 obj.setup.trial  = 1*ones(obj.setup.subNum,1);
 obj.setup.ICAprefix = icaPrefix;
 for i = 1:obj.setup.subNum
-	obj.setup.subDir(i) = {[rootDir, '/',cell2mat(sbList(i)), icaDir]};
+    obj.setup.subDir(i) = {fullfile(rootDir, cell2mat(sbList(i)), icaDir)};
 end
 infoFn = []; %'../gRAICAR/mask_coordTable.mat';
-obj.setup.maskNm = [rootDir,maskPath];
+obj.setup.maskNm = fullfile(rootDir,maskPath);
 
 %%%%% set up candidate %%%%%
 obj.setup.candidates = candidates;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-obj.setup.outDir = [rootDir, outDir];
-obj.setup.outPrefix = [obj.setup.outDir, '/', taskName];
+obj.setup.outDir = fullfile(rootDir, outDir);
+obj.setup.outPrefix = fullfile(obj.setup.outDir, taskName);
 obj.setup.cmptPrefix = obj.setup.outDir;
 obj.setup.step = 50;
 mkdir (obj.setup.outDir);
-mkdir ([obj.setup.outDir, '/computeFile']);
+mkdir (fullfile(obj.setup.outDir, 'computeFile'));
 
 % trialTab: a table storing the mapping between trials and subjects
 obj.result.trialTab = [];
@@ -50,8 +50,9 @@ if ~isempty (infoFn)
 	clear subj;
 else
 	hdr = load_nifti (obj.setup.maskNm);
-	obj.result.coordTable = makeCoordTable (hdr.vol); 
-	obj.result.mask = hdr.vol;
+%     nii = load_untouch_nii (obj.setup.maskNm);
+	obj.result.coordTable = makeCoordTable (hdr.vol); %nii.img
+	obj.result.mask = hdr.vol; %nii.img
 end
 
 outFn = sprintf ('%s_configFile.mat', obj.setup.outPrefix);

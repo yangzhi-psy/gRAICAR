@@ -38,7 +38,7 @@ compPerPage = settings.compPerPage;
 %%%%%%%%%% end of user settings %%%%%%%%%%%%%%%%%%%
 keep_FSM = 0;
 
-load ([rootDir, outDir, '/', taskName, '_configFile.mat'])
+load (fullfile(rootDir, outDir,  sprintf('%s_configFile.mat',taskName)))
 
 % check if all NMI computations are done
 fprintf ('\n-------------------------\n');
@@ -48,7 +48,8 @@ total = size (obj.result.cmptTab, 1);
 
 failList=[];
 for ptr=1:obj.setup.step:total
-	fn = sprintf ('%s/computeFile/NMI_grp_result_%d.mat', obj.setup.outDir, ptr);
+% 	fn = sprintf ('%s/computeFile/NMI_grp_result_%d.mat', obj.setup.outDir, ptr);
+    fn = fullfile(obj.setup.outDir, 'computeFile', sprintf('NMI_grp_result_%d.mat', ptr));
 	if ~exist(fn,'file')
 		failList = [failList, ptr];
 	end
@@ -107,11 +108,11 @@ else
     
     
     % start multiple computing core
-    dlmwrite ([rootDir, outDir, '/distComp.log'], 0, 'precision', '%d');
+    dlmwrite (fullfile(rootDir, outDir, 'distComp.log'), 0, 'precision', '%d');
     pth = which ('gRAICAR_step2');
     gRAICAR_pth = fileparts(pth);
     nIt = zeros (ncores, 1);
-    fn_tmp = [rootDir, outDir, '/tmp_obj.mat'];
+    fn_tmp = fullfile(rootDir, outDir, 'tmp_obj.mat');
     save (fn_tmp, 'obj');
     for i = 2:ncores
         nIt(i) = round(1000/ncores);
@@ -128,7 +129,7 @@ else
     % check status
     prog = 0;
     while prog < ncores
-        fn = [rootDir, outDir, '/distComp.log'];
+        fn = fullfile(rootDir, outDir, 'distComp.log');
         prog = load (fn, '-ascii');
         pause (1);
     end
@@ -177,15 +178,30 @@ fprintf ('-------------------------\n');
 
 hdr = obj.setup.niihdr;
 sz = size (map4D);
-mkdir(sprintf('%s/compMaps/', obj.setup.outDir));
+% mkdir(sprintf('%s/compMaps/', obj.setup.outDir));
+mkdir(fullfile(obj.setup.outDir, 'compMaps'));
 for i=1:sz(4)
+    % output config for save_nifti
 	hdr.vol = map4D(:,:,:,i);
 	hdr.dim = [3 sz(1) sz(2) sz(3) 1 1 1 1];
-    hdr.pixdim = [-1 3 3 3 0 0 0 0];
+  hdr.pixdim = [-1 3 3 3 0 0 0 0];
 	hdr.glmax = max (hdr.vol(:));
 	hdr.glmin = min (hdr.vol(:));
-	fn = sprintf('%s/compMaps/comp%03d.nii.gz', obj.setup.outDir, i);
-	save_nifti (hdr, fn);
+% 	fn = sprintf('%s/compMaps/comp%03d.nii.gz', obj.setup.outDir, i);
+    fn = fullfile(obj.setup.outDir, 'compMaps', sprintf('comp%03d.nii', i));
+    save_nifti (hdr, fn);
+    
+%     % output config for save_untouch_nii
+%     nii.img = map4D(:,:,:,i);
+%     nii.hdr.dime.dim = [3 sz(1) sz(2) sz(3) 1 1 1 1];
+%     nii.hdr.dime.pixdim = [-1 3 3 3 0 0 0 0];
+%     nii.hdr.dime.pixdim.glmax = max (nii.img(:));
+%     nii.hdr.dime.pixdim.glmin = min (nii.img(:));
+%     nii.hdr.dime.datatype = 16;
+%     nii.untouch = 1;
+%     
+%     fn = fullfile(obj.setup.outDir, 'compMaps', sprintf('comp%03d.nii', i));
+%     save_untouch_nii(nii, fn);
 	fprintf ('compMap%d written out\n', i);
 end
 toc,
@@ -204,8 +220,19 @@ if settings.savemovie == 1
         hdr.dim = [4 sz(1) sz(2) sz(3) sz(5) 1 1 1];
         hdr.glmax = max (squeeze(allMap(:,:,:,i,:)));
         hdr.glmin = min (squeeze(allMap(:,:,:,i,:)));
-        fn = sprintf('%s/compMaps/movie_comp%03d.nii.gz', obj.setup.outDir, i);
-        save_nifti (hdr, fn); 
+%         fn = sprintf('%s/compMaps/movie_comp%03d.nii.gz', obj.setup.outDir, i);
+        fn = fullfile(obj.setup.outDir, 'compMaps', sprintf('movie_comp%03d.nii', i));
+        save_nifti (hdr, fn);
+
+%         % output config for save_untouch_nii
+%         nii.img = squeeze(allMap(:,:,:,i,:));
+%         nii.hdr.dime.dim = [4 sz(1) sz(2) sz(3) sz(5) 1 1 1];
+%         nii.hdr.dime.pixdim = [-1 3 3 3 1 0 0 0];
+%         nii.hdr.dime.pixdim.glmax = max (squeeze(allMap(:,:,:,i,:)));
+%         nii.hdr.dime.pixdim.glmin = min (squeeze(allMap(:,:,:,i,:)));
+%         nii.hdr.dime.datatype = 16;
+%         nii.untouch = 1;
+%         fn = fullfile(obj.setup.outDir, 'compMaps', sprintf('movie_comp%03d.nii.gz', i));
         fprintf ('movie_compMap%d written out\n', i);
     end
     toc,

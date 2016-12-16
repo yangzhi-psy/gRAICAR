@@ -54,7 +54,7 @@ if handles.useRAICAR == 0 % if not using RAICAR
     matched = zeros(len, 1);
     icapaths = cell(len, 1);
     for i = 1:len
-        icapaths{i} = sprintf('%s/%s/',handles.workdir, sbList{i});
+        icapaths{i} = fullfile(handles.workdir, sbList{i});
         if strfind(handles.icapath, icapaths{i})==1
             matched(i) = 1;
         end   
@@ -62,10 +62,9 @@ if handles.useRAICAR == 0 % if not using RAICAR
     idx_match = find(matched == 1);
     if ~isempty (idx_match)
         len_icapath = length(icapaths{idx_match(1)});
-        tosplit = handles.icapath(len_icapath:end);
-        splited = strsplit(tosplit, '/');
-        settings.icaPrefix = splited{end};
-        settings.icaDir = strjoin(splited(1:end-1), '/');
+        tosplit = handles.icapath(len_icapath+1:end);
+        [settings.icaDir, fn, ext] = fileparts(tosplit);
+        settings.icaPrefix = [fn, ext];
     else
         errmsg = sprintf ('the ICA result file path is not found under the working directory');
         errordlg(errmsg, 'Path error', 'modal');
@@ -75,7 +74,7 @@ if handles.useRAICAR == 0 % if not using RAICAR
     % check whether the ica file exist for each subject
     icaFound = zeros(len,1);
     for i=1:len
-        fn = sprintf('%s/%s%s/%s', handles.workdir, sbList{i}, settings.icaDir, settings.icaPrefix);
+        fn = fullfile(handles.workdir, sbList{i}, settings.icaDir, settings.icaPrefix);
         if exist(fn)== 2
             icaFound(i) = 1;
         end
@@ -97,7 +96,7 @@ else % if use RAICAR to run ICA
     matched = zeros(len, 1);
     fmripaths = cell(len, 1);
     for i = 1:len
-        fmripaths{i} = sprintf('%s/%s/',handles.workdir, sbList{i});
+        fmripaths{i} = fullfile(handles.workdir, sbList{i});
         if strfind(handles.fmripath, fmripaths{i})==1
             matched(i) = 1;
         end   
@@ -105,14 +104,13 @@ else % if use RAICAR to run ICA
     idx_match = find(matched == 1);
     if ~isempty (idx_match)
         len_fmripath = length(fmripaths{idx_match(1)});
-        tosplit = handles.fmripath(len_fmripath:end);
-        splited = strsplit(tosplit, '/');
-        settings.fmriPrefix = splited{end};
-        settings.fmriDir = strjoin(splited(1:end-1), '/');
-
+        tosplit = handles.fmripath(len_fmripath+1:end);
+        [settings.fmriDir, fn, ext] = fileparts(tosplit);
+        settings.fmriPrefix = [fn, ext];
+        
         % define icaprefix using the RAICAR default
         settings.icaPrefix = 'RAICAR_ICA';
-        settings.icaDir = '/rest/ICA/RAICAR';
+        settings.icaDir = fullfile('rest', 'ICA', 'RAICAR');
     else
         errmsg = sprintf ('the fMRI file path is not found under the working directory');
         errordlg(errmsg, 'Path error', 'modal');
@@ -122,7 +120,7 @@ else % if use RAICAR to run ICA
     % check whether the fmri file exist for each subject
     fmriFound = zeros(len,1);
     for i=1:len
-        fn = sprintf('%s/%s%s/%s', handles.workdir, sbList{i}, settings.fmriDir, settings.fmriPrefix);
+        fn = fullfile(handles.workdir, sbList{i}, settings.fmriDir, settings.fmriPrefix);
         if exist(fn)== 2
             fmriFound(i) = 1;
         end

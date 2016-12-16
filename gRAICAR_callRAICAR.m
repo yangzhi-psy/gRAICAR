@@ -6,13 +6,13 @@ for i = 1:length (sbList)
 fprintf ('\n =======================\n  RAICAR on subject %d...\n =========================\n', i);
 sb = sbList{i}; % to be replaced with for loop
 
-subj.setup.inputNm   = sprintf ('%s/%s/%s/%s', settings.workdir, sb, settings.fmriDir, settings.fmriPrefix);
+subj.setup.inputNm   = fullfile (settings.workdir, sb, settings.fmriDir, settings.fmriPrefix);
 
-subj.setup.mskNm     = sprintf ('%s/%s', settings.workdir, settings.maskPath);
+subj.setup.mskNm     = fullfile (settings.workdir, settings.maskPath);
 
-subj.setup.trials    = 30;                % number of ICA realizations
+subj.setup.trials    = 3;                % number of ICA realizations
 
-subj.setup.outPrefix = sprintf ('%s/%s/%s/%s', settings.workdir, sb, settings.icaDir, settings.icaPrefix);
+subj.setup.outPrefix = fullfile (settings.workdir, sb, settings.icaDir, settings.icaPrefix);
                         % prefix for the output files. the output 
 				        % files include the multiple ICA result (.mat), 
                         % the CRCM matrix(.mat), the ranking and 
@@ -60,7 +60,9 @@ subj.setup.ICAOption.approach = 'symm';
 subj.setup.ICAOption.epsilon  = 0.0001;
 subj.setup.ICAOption.maxNumIterations = 3000;
 subj.setup.ICAOption.g        = 'tanh';
-subj.setup.stabilization      = 'off' ;   % structure storing user-specified options 
+subj.setup.stabilization      = 'off' ;   
+subj.setup.ICAOption.lastEig  = 75;
+% structure storing user-specified options 
 					 % for ICA. for details see the FastICA help.
                                          % default:
                                          %     ICAOption.approach = 'symm'
@@ -72,14 +74,14 @@ subj.setup.stabilization      = 'off' ;   % structure storing user-specified opt
                                          % default values will be overwritten. This means,
                                          % even though you only need to modify one of the ICA 
 
-subj.setup.webReport = 1;                % a flag indicating whether RAICAR will           
+subj.setup.webReport = 0;                % a flag indicating whether RAICAR will           
                                          % automatically generate a web-page report. set to 
                                          % 1 to generate. default = 1;
 subj.setup.compPerPage = settings.compPerPage;
 subj.setup.displayThreshold = settings.displayThreshold;
 
 % start RAICAR
-mkdir (sprintf ('%s/%s/%s/', settings.workdir, sb, settings.icaDir));
+mkdir (fullfile (settings.workdir, sb, settings.icaDir));
 [subj] = raicar_controller (subj);
 
 % save the results

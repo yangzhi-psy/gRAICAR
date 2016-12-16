@@ -49,11 +49,17 @@ fclose(fid);
 candidates = []; % candiate components
 % check if use RAICAR
 if settings.useRAICAR == 1
-    candidates = gRAICAR_callRAICAR(settings, sbList);
-    icaPrefix = sprintf ('%s_aveMap.nii.gz', settings.icaPrefix);
-    fn = sprintf ('%s/RAICAR_candiates.mat', settings.outdir);
-    save (fn, 'candidates');
-%     load(fn);
+% code for calling RAICAR. For the sake of time, replaced it using simple
+% fastICA (see below)
+%     candidates = gRAICAR_callRAICAR(settings, sbList);
+%     icaPrefix = sprintf ('%s_aveMap.nii.gz', settings.icaPrefix);
+%     fn = fullfile (settings.outdir, 'RAICAR_candiates.mat');
+%     save (fn, 'candidates');
+% %     load(fn);
+
+% code for conducting single ICA
+    gRAICAR_callSingleICA(settings, sbList);
+    icaPrefix = sprintf ('%s_aveMap.nii', settings.icaPrefix);
 end
 
 % setup analysis
@@ -70,14 +76,14 @@ obj = gRAICAR_prepareData (obj,1:length(sbList));
 if exist ([rootDir, outDir]) ~= 7
     mkdir ([rootDir, outDir])
 end
-if exist([rootDir, outDir, '/progress.log']) == 2
-    delete([rootDir, outDir, '/progress.log'])
+if exist(fullfile(rootDir, outDir, 'progress.log')) == 2
+    delete(fullfile(rootDir, outDir, 'progress.log'))
 end
-if exist([rootDir, outDir, '/distComp.log']) == 2
-    delete([rootDir, outDir, '/distComp.log'])
+if exist(fullfile(rootDir, outDir, 'distComp.log')) == 2
+    delete(fullfile(rootDir, outDir, 'distComp.log'))
 end
-dlmwrite ([rootDir, outDir, '/progress.log'], 1, 'precision', '%d');
-dlmwrite ([rootDir, outDir, '/distComp.log'], 0, 'precision', '%d');
+dlmwrite (fullfile(rootDir, outDir, 'progress.log'), 1, 'precision', '%d');
+dlmwrite (fullfile(rootDir, outDir, 'distComp.log'), 0, 'precision', '%d');
 
 fprintf ('\n-------------------------\n');
 fprintf (' set up finished \n');

@@ -7,7 +7,7 @@ function varargout = gRAICAR_GUI(varargin)
 %      the existing singleton*.
 %
 %      GRAICAR_GUI('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in GRAICAR_GUI.M with the given input arguments.
+%      function named CALLBACK in GRAICAR_GUI. M with the given input arguments.
 %
 %      GRAICAR_GUI('Property','Value',...) creates a new GRAICAR_GUI or raises the
 %      existing singleton*.  Starting from the left, property value pairs are
@@ -354,10 +354,10 @@ function btn_save_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-[pass, settings] = gRAICAR_check_settings (handles);
+[pass, gRAICAR_settings] = gRAICAR_check_settings (handles);
 if pass == 1
     fn = sprintf ('gRAICAR_settings_%s_%s.mat', handles.taskname, datestr(now, 'mmm-dd.HH-MM'));
-    uisave ('settings', fn);
+    uisave ('gRAICAR_settings', fn);
 end
 
 
@@ -371,9 +371,9 @@ function btn_load_Callback(hObject, eventdata, handles)
 [filename, pathname] = uigetfile('*.mat', 'Select a gRAICAR setting file:');
 if filename ~= 0
     load (fullfile(pathname, filename));
-    for nm = fieldnames(settings)'
+    for nm = fieldnames(gRAICAR_settings)'
         fdnm = cell2mat (nm);
-        handles.(fdnm) = settings.(fdnm);
+        handles.(fdnm) = gRAICAR_settings.(fdnm);
     end
     guidata(hObject, handles);
 

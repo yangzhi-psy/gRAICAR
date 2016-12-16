@@ -17,7 +17,7 @@ for sb = sub
     trials = length (trTab);
         
     for tr = 1:trials;			
-        fn = sprintf ('%s/bin_%s%d.mat', cell2mat (obj.setup.subDir(sb)), obj.setup.ICAprefix, tr);
+        fn = fullfile(cell2mat (obj.setup.subDir(sb)), sprintf ('bin_%s%d.mat', obj.setup.ICAprefix, tr));
         if exist (fn, 'file')  % if the ICA maps are already binned
             fprintf ('file %s exist, will not overwrite it\n', fn);
             try % try to load the binned file
@@ -29,9 +29,9 @@ for sb = sub
             
             % save nii header info
             if trials == 1 % deal with format difference
-                fn = sprintf ('%s/%s', cell2mat (obj.setup.subDir(sb)), obj.setup.ICAprefix);
+                fn = fullfile (cell2mat (obj.setup.subDir(sb)), obj.setup.ICAprefix);
             elseif trials > 1
-                fn = sprintf ('%s%d/%s', cell2mat (obj.setup.subDir(sb)), tr, obj.setup.ICAprefix);
+                fn = fullfile(sprintf ('%s%d', cell2mat (obj.setup.subDir(sb)), tr), obj.setup.ICAprefix);
             end
             if sb == 1 && tr == 1
                 obj.setup.niihdr = load_nifti(fn, 'hdr_only');
@@ -53,9 +53,9 @@ for sb = sub
                 end
             else
                 if trials == 1
-                    fn = sprintf ('%s/%s', cell2mat (obj.setup.subDir(sb)), obj.setup.ICAprefix);
+                    fn = fullfile(sprintf ('%s', cell2mat (obj.setup.subDir(sb))), obj.setup.ICAprefix);
                 elseif trials > 1
-                    fn = sprintf ('%s%d/%s', cell2mat (obj.setup.subDir(sb)), tr, obj.setup.ICAprefix);
+                    fn = fullfile(sprintf ('%s%d', cell2mat (obj.setup.subDir(sb)), tr), obj.setup.ICAprefix);
                 end
                 hdr = load_nifti(fn);
                 nii = hdr.vol;
@@ -87,8 +87,8 @@ for sb = sub
             for cp = 1:numComp
                 comp(cp, :) = NMI_binData (comp(cp, :), numVx, ncellx);
             end
-            fn = sprintf ('%s/bin_%s%d.mat', cell2mat (obj.setup.subDir(sb)), ...
-            obj.setup.ICAprefix, tr);
+            fn = fullfile(cell2mat (obj.setup.subDir(sb)), sprintf ('bin_%s%d.mat',  ...
+            obj.setup.ICAprefix, tr));
             save (fn, 'comp');
 			obj.result.trialTab(trTab(tr), 3) = size (comp, 1);
 			fprintf ('num of IC = %d\n',size (comp, 1));
