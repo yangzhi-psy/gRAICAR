@@ -60,7 +60,7 @@ gRAICAR_distrCompNMI (inPrefix,cueFile);
 prog = 0;
 
 while prog < ncores
-    fn = [rootDir, outDir, '/distComp.log'];
+    fn = fullfile(rootDir, outDir, 'distComp.log');
     prog = load (fn, '-ascii');
     pause(1);
 end

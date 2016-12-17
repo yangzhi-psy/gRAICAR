@@ -58,7 +58,7 @@ if settings.useRAICAR == 1
 % %     load(fn);
 
 % code for conducting single ICA
-    gRAICAR_callSingleICA(settings, sbList);
+%     gRAICAR_callSingleICA(settings, sbList);
     icaPrefix = sprintf ('%s_aveMap.nii', settings.icaPrefix);
 end
 

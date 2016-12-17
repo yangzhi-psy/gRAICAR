@@ -18,7 +18,7 @@ reproLoad = compWeight (obj, comps);
 for sb = 1:obj.setup.subNum
 	for tr = 1:obj.setup.trial(sb)
 		% to be replaced by more capable loading function
-		fn = sprintf ('%s/%s', cell2mat (obj.setup.subDir(sb)), obj.setup.ICAprefix);
+		fn = fullfile (cell2mat (obj.setup.subDir(sb)), obj.setup.ICAprefix);
         hdr = load_nifti(fn);
         dim = hdr.dim([2:5]);
         

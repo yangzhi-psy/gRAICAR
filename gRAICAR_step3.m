@@ -116,7 +116,7 @@ else
     save (fn_tmp, 'obj');
     for i = 2:ncores
         nIt(i) = round(1000/ncores);
-        cmd = sprintf ('%s/bin/matlab -nodisplay -r "addpath(genpath(''%s''));generateNullRepro_worker (''%s'', %d, %d);exit" &', matlabroot, gRAICAR_pth, fn_tmp, nIt(i), i);
+        cmd = sprintf ('"%s" -nodisplay -r "addpath(genpath(''%s''));generateNullRepro_worker (''%s'', %d, %d);exit" &', fullfile(matlabroot, 'bin', 'matlab.exe'), gRAICAR_pth, fn_tmp, nIt(i), i);      
         fprintf ('\nStarting computing core %d\n', i);
         system (cmd);
         pause(1);
